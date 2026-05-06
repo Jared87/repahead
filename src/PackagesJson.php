@@ -85,7 +85,7 @@ final class PackagesJson
 
         return new PackagesJsonResult(
             json: (string) $json,
-            packagesCount: $versionCount,
+            packagesCount: count($packages),
             versionsCount: $versionCount,
             skippedCount: $skipped,
         );
