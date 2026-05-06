@@ -1,0 +1,9 @@
+.idea/
+/vendor/
+/.env
+/cache/*
+!/cache/.gitkeep
+/zips/*
+!/zips/.gitkeep
+.phpunit.result.cache
+.phpunit.cache/

@@ -1,0 +1,43 @@
+{
+    "name": "repahead/composer-server",
+    "description": "Static-feeling private Composer repository",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.2",
+        "ext-zip": "*",
+        "ext-json": "*",
+        "ext-fileinfo": "*",
+        "league/route": "^6.2",
+        "league/flysystem": "^3.28",
+        "league/flysystem-aws-s3-v3": "^3.28",
+        "laminas/laminas-diactoros": "^3.4",
+        "laminas/laminas-httphandlerrunner": "^2.10",
+        "vlucas/phpdotenv": "^5.6",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.29",
+        "league/flysystem-memory": "^3.28",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^10.5",
+        "rector/rector": "^2.4"
+    },
+    "autoload": {
+        "psr-4": { "RepAhead\\": "app/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "RepAhead\\Tests\\": "tests/" }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "rector": "rector",
+        "rector:dry": "rector --dry-run",
+        "stan": "phpstan analyse --memory-limit=512M",
+        "pint": "pint",
+        "pint:test": "pint --test"
+    }
+}

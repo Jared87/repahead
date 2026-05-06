@@ -1,0 +1,9 @@
+parameters:
+    level: 8
+    paths:
+        - app
+        - tests
+        - public
+    excludePaths:
+        - tests/Support/ThrowingFilesystem.php
+    tmpDir: .phpunit.cache/phpstan

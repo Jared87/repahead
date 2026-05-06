@@ -1,0 +1,11 @@
+.git/
+.idea/
+vendor/
+tests/
+cache/
+zips/
+docs/
+.env
+.phpunit.cache/
+.phpunit.result.cache
+*.md

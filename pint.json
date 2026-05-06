@@ -1,0 +1,10 @@
+{
+    "preset": "psr12",
+    "exclude": [
+        "vendor",
+        "cache",
+        "zips",
+        "docs",
+        ".phpunit.cache"
+    ]
+}
