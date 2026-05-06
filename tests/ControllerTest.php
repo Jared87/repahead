@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd\Tests;
@@ -44,7 +45,9 @@ final class ControllerTest extends TestCase
 
     protected function tearDown(): void
     {
-        foreach (glob($this->cacheDir . '/*') ?: [] as $f) @unlink($f);
+        foreach (glob($this->cacheDir . '/*') ?: [] as $f) {
+            @unlink($f);
+        }
         @rmdir($this->cacheDir);
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -9,5 +10,6 @@ final readonly class ZipMeta
     public function __construct(
         public array $composerJson,
         public string $sha1,
-    ) {}
+    ) {
+    }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -27,14 +28,14 @@ final class Catalog
                 package: $m[2],
                 version: $m[3],
                 path: $path,
-                size: (int) ($item->fileSize() ?? 0),
-                lastModified: (int) ($item->lastModified() ?? 0),
+                size: $item->fileSize() ?? 0,
+                lastModified: $item->lastModified() ?? 0,
             );
         }
 
         usort(
             $entries,
-            fn(CatalogEntry $a, CatalogEntry $b): int => strcmp($a->path, $b->path)
+            fn (CatalogEntry $a, CatalogEntry $b): int => strcmp($a->path, $b->path)
         );
 
         $hashInput = '';

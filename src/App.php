@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -65,7 +66,7 @@ final class App
         $router->setStrategy($strategy);
         $router->middleware($auth);
 
-        $router->get('/packages.json', fn(ServerRequestInterface $req): ResponseInterface => $controller->packages($req));
+        $router->get('/packages.json', fn (ServerRequestInterface $req): ResponseInterface => $controller->packages($req));
         $router->get(
             '/dist/{vendor}/{package}/{version}.zip',
             function (ServerRequestInterface $req, array $args) use ($controller): ResponseInterface {
@@ -73,7 +74,7 @@ final class App
                 return $controller->dist($req, $args);
             },
         );
-        $router->post('/rebuild', fn(ServerRequestInterface $req): ResponseInterface => $controller->rebuild($req));
+        $router->post('/rebuild', fn (ServerRequestInterface $req): ResponseInterface => $controller->rebuild($req));
 
         return $router;
     }

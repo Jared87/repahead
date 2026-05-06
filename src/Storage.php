@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -12,7 +13,9 @@ use League\Flysystem\Local\LocalFilesystemAdapter;
 final class Storage
 {
     /** @param array<string,string> $awsEnv */
-    public function __construct(private array $awsEnv) {}
+    public function __construct(private array $awsEnv)
+    {
+    }
 
     public function make(string $dsn): Filesystem
     {

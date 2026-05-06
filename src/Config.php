@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -46,10 +47,28 @@ final readonly class Config
         $this->listingTtl = (int) $ttlRaw;
     }
 
-    public function baseUrl(): string { return $this->baseUrl; }
-    public function storageDsn(): string { return $this->storageDsn; }
-    public function cacheDir(): string { return $this->cacheDir; }
-    public function listingTtlSeconds(): int { return $this->listingTtl; }
-    public function authUser(): string { return $this->authUser; }
-    public function authPass(): string { return $this->authPass; }
+    public function baseUrl(): string
+    {
+        return $this->baseUrl;
+    }
+    public function storageDsn(): string
+    {
+        return $this->storageDsn;
+    }
+    public function cacheDir(): string
+    {
+        return $this->cacheDir;
+    }
+    public function listingTtlSeconds(): int
+    {
+        return $this->listingTtl;
+    }
+    public function authUser(): string
+    {
+        return $this->authUser;
+    }
+    public function authPass(): string
+    {
+        return $this->authPass;
+    }
 }

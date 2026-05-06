@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -12,12 +13,15 @@ final readonly class PackagesJsonResult
         public int $packagesCount,
         public int $versionsCount,
         public int $skippedCount,
-    ) {}
+    ) {
+    }
 }
 
 final readonly class PackagesJson
 {
-    public function __construct(private LoggerInterface $logger) {}
+    public function __construct(private LoggerInterface $logger)
+    {
+    }
 
     /**
      * @param iterable<CatalogEntry> $entries

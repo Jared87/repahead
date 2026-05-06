@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -14,7 +15,8 @@ final readonly class Auth implements MiddlewareInterface
     public function __construct(
         private string $user,
         private string $pass,
-    ) {}
+    ) {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

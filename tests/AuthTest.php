@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd\Tests;
@@ -15,8 +16,10 @@ final class AuthTest extends TestCase
 {
     private function handler(string $body = 'OK'): RequestHandlerInterface
     {
-        return new class($body) implements RequestHandlerInterface {
-            public function __construct(private readonly string $body) {}
+        return new class ($body) implements RequestHandlerInterface {
+            public function __construct(private readonly string $body)
+            {
+            }
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $r = new Response();

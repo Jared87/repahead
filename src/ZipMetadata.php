@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -11,7 +12,9 @@ use ZipArchive;
 
 final readonly class ZipMetadata
 {
-    public function __construct(private LoggerInterface $logger = new NullLogger()) {}
+    public function __construct(private LoggerInterface $logger = new NullLogger())
+    {
+    }
 
     public function read(Filesystem $fs, string $path): ?ZipMeta
     {

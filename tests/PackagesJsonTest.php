@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd\Tests;
@@ -14,9 +15,12 @@ final class PackagesJsonTest extends TestCase
     private function entry(string $vendor, string $package, string $version): CatalogEntry
     {
         return new CatalogEntry(
-            $vendor, $package, $version,
+            $vendor,
+            $package,
+            $version,
             "$vendor/$package/$version.zip",
-            100, 1700000000
+            100,
+            1700000000
         );
     }
 
@@ -65,7 +69,7 @@ final class PackagesJsonTest extends TestCase
             $this->entry('a', 'b', '1.0.0'),
             $this->entry('a', 'b', '2.0.0'),
         ];
-        $reader = fn(CatalogEntry $e): ?\Composerd\ZipMeta => $e->version === '2.0.0'
+        $reader = fn (CatalogEntry $e): ?\Composerd\ZipMeta => $e->version === '2.0.0'
             ? null
             : new ZipMeta(['name' => 'a/b', 'version' => '1.0.0'], str_repeat('b', 40));
         $builder = new PackagesJson(new NullLogger());
@@ -79,7 +83,7 @@ final class PackagesJsonTest extends TestCase
     public function testSkipsWhenComposerJsonNameMismatchesPath(): void
     {
         $entries = [$this->entry('a', 'b', '1.0.0')];
-        $reader = fn(): \Composerd\ZipMeta => new ZipMeta(['name' => 'wrong/name', 'version' => '1.0.0'], str_repeat('c', 40));
+        $reader = fn (): \Composerd\ZipMeta => new ZipMeta(['name' => 'wrong/name', 'version' => '1.0.0'], str_repeat('c', 40));
         $builder = new PackagesJson(new NullLogger());
         $result = $builder->build($entries, $reader, 'https://x');
         $decoded = json_decode($result->json, true);
@@ -91,7 +95,7 @@ final class PackagesJsonTest extends TestCase
     public function testFilenameVersionWinsButLogsOnMismatch(): void
     {
         $entries = [$this->entry('a', 'b', '1.0.0')];
-        $reader = fn(): \Composerd\ZipMeta => new ZipMeta(
+        $reader = fn (): \Composerd\ZipMeta => new ZipMeta(
             ['name' => 'a/b', 'version' => '9.9.9', 'type' => 'library'],
             str_repeat('d', 40)
         );
@@ -106,7 +110,7 @@ final class PackagesJsonTest extends TestCase
     public function testSkipsWhenComposerJsonMissingName(): void
     {
         $entries = [$this->entry('a', 'b', '1.0.0')];
-        $reader = fn(): \Composerd\ZipMeta => new ZipMeta(['version' => '1.0.0'], str_repeat('e', 40));
+        $reader = fn (): \Composerd\ZipMeta => new ZipMeta(['version' => '1.0.0'], str_repeat('e', 40));
         $builder = new PackagesJson(new NullLogger());
         $result = $builder->build($entries, $reader, 'https://x');
         self::assertSame(1, $result->skippedCount);
@@ -115,7 +119,7 @@ final class PackagesJsonTest extends TestCase
     public function testEmptyEntriesProducesEmptyPackages(): void
     {
         $builder = new PackagesJson(new NullLogger());
-        $result = $builder->build([], fn(): null => null, 'https://x');
+        $result = $builder->build([], fn (): null => null, 'https://x');
         $decoded = json_decode($result->json, true);
         $expectedObj = new \stdClass();
         $expectedObj->packages = new \stdClass();

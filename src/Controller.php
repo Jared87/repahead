@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -22,7 +23,8 @@ final readonly class Controller
         private Cache $cache,
         private string $baseUrl,
         private LoggerInterface $logger = new NullLogger(),
-    ) {}
+    ) {
+    }
 
     public function packages(ServerRequestInterface $request): ResponseInterface
     {
@@ -46,7 +48,7 @@ final readonly class Controller
         $json = $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
-                fn(CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             )->json;
         });
@@ -105,14 +107,14 @@ final readonly class Controller
         $this->cache->rebuild($hash, function () use ($entries, &$result) {
             $result = $this->packagesJson->build(
                 $entries,
-                fn(CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             );
             return $result->json;
         });
 
         // invalidate() above guarantees Cache::rebuild calls the closure, so $result is set.
-        \assert($result !== null);
+        \assert($result instanceof \Composerd\PackagesJsonResult);
         $summary = [
             'packages' => $result->packagesCount,
             'versions' => $result->versionsCount,

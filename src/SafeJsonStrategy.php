@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -34,7 +35,8 @@ final class SafeJsonStrategy extends JsonStrategy
             public function __construct(
                 private readonly LoggerInterface $logger,
                 private readonly ResponseFactoryInterface $responseFactory,
-            ) {}
+            ) {
+            }
 
             public function process(
                 ServerRequestInterface $request,

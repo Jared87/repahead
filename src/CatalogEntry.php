@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Composerd;
@@ -12,7 +13,8 @@ final readonly class CatalogEntry
         public string $path,
         public int $size,
         public int $lastModified,
-    ) {}
+    ) {
+    }
 
     public function fullName(): string
     {
