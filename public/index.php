@@ -11,6 +11,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 $root = dirname(__DIR__);
+chdir($root);
 if (file_exists("$root/.env")) {
     Dotenv::createImmutable($root)->load();
 }
