@@ -6,6 +6,8 @@ namespace RepAhead\Catalog;
 
 use Psr\Log\LoggerInterface;
 
+// Co-located with PackagesJson; PSR-4 cannot autoload this class directly,
+// it gets registered as a side effect when PackagesJson is loaded.
 final readonly class PackagesJsonResult
 {
     public function __construct(
