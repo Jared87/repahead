@@ -3,18 +3,49 @@ declare(strict_types=1);
 
 namespace Composerd;
 
+use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ResponseFactory;
 use League\Flysystem\Filesystem;
 use League\Route\Router;
-use League\Route\Strategy\JsonStrategy;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use Throwable;
 
 final class App
 {
-    public static function router(Config $config, Filesystem $fs, ?\Psr\Log\LoggerInterface $logger = null): Router
+    /**
+     * Dispatch the request and translate any uncaught exception into a generic
+     * 500 with a fixed JSON body. League Route's JsonStrategy default would
+     * otherwise echo the exception message (including absolute file paths)
+     * to the client.
+     */
+    public static function safeDispatch(
+        Router $router,
+        ServerRequestInterface $request,
+        LoggerInterface $logger = new NullLogger(),
+    ): ResponseInterface {
+        try {
+            return $router->dispatch($request);
+        } catch (Throwable $e) {
+            $logger->error('Uncaught exception in dispatch', [
+                'error' => $e->getMessage(),
+                'class' => $e::class,
+            ]);
+            $resp = new Response();
+            $resp->getBody()->write((string) json_encode(
+                ['error' => 'internal_server_error'],
+                JSON_UNESCAPED_SLASHES
+            ));
+            return $resp
+                ->withStatus(500)
+                ->withHeader('Content-Type', 'application/json');
+        }
+    }
+
+    public static function router(Config $config, Filesystem $fs, LoggerInterface $logger = new NullLogger()): Router
     {
-        $logger ??= new StderrLogger();
 
         $controller = new Controller(
             fs: $fs,
@@ -28,8 +59,8 @@ final class App
 
         $auth = new Auth($config->authUser(), $config->authPass());
 
-        // JsonStrategy handles 404/405 as proper HTTP responses instead of bubbling exceptions.
-        $strategy = new JsonStrategy(new ResponseFactory());
+        // SafeJsonStrategy handles 404/405 as JSON responses and sanitises uncaught exceptions.
+        $strategy = new SafeJsonStrategy(new ResponseFactory(), $logger);
         $router = new Router();
         $router->setStrategy($strategy);
         $router->middleware($auth);

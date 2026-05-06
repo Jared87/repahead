@@ -96,4 +96,25 @@ final class EndToEndTest extends TestCase
         $resp = $router->dispatch($this->authedRequest('GET', '/anything-else'));
         self::assertSame(404, $resp->getStatusCode());
     }
+
+    public function testSafeJsonStrategySanitisesUncaughtException(): void
+    {
+        $router = new \League\Route\Router();
+        $router->setStrategy(new \Composerd\SafeJsonStrategy(new \Laminas\Diactoros\ResponseFactory()));
+        $router->get('/boom', function (): \Psr\Http\Message\ResponseInterface {
+            throw new \RuntimeException('Cache directory does not exist: /var/private/leak');
+        });
+
+        $resp = App::safeDispatch($router, new \Laminas\Diactoros\ServerRequest([], [], '/boom', 'GET'));
+
+        self::assertSame(500, $resp->getStatusCode());
+        self::assertSame('application/json', $resp->getHeaderLine('Content-Type'));
+        self::assertSame(
+            ['error' => 'internal_server_error'],
+            json_decode((string) $resp->getBody(), true)
+        );
+        // Critically: the leaked path must NOT appear in the response body or reason phrase.
+        self::assertStringNotContainsString('/var/private/leak', (string) $resp->getBody());
+        self::assertStringNotContainsString('/var/private/leak', $resp->getReasonPhrase());
+    }
 }
