@@ -20,6 +20,8 @@ services:
     volumes:
       - composer-zips:/var/www/html/zips
       - composer-cache:/var/www/html/cache
+      # Or, to drop ZIPs straight from the host (replaces composer-zips above):
+      # - ./zips:/var/www/html/zips
     restart: unless-stopped
 
 volumes:
