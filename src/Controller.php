@@ -6,9 +6,11 @@ namespace Composerd;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Stream;
 use League\Flysystem\Filesystem;
-use League\Flysystem\UnableToReadFile;
+use League\Flysystem\FilesystemException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 final class Controller
 {
@@ -19,26 +21,28 @@ final class Controller
         private PackagesJson $packagesJson,
         private Cache $cache,
         private string $baseUrl,
+        private LoggerInterface $logger = new NullLogger(),
     ) {}
 
     public function packages(ServerRequestInterface $request): ResponseInterface
     {
-        // Step 0: TTL shortcut.
         $cached = $this->cache->readIfFresh();
         if ($cached !== null) {
             return $this->jsonResponse(200, $cached);
         }
 
-        // Step 1: list + hash.
-        [$entries, $hash] = $this->catalog->scan($this->fs);
+        try {
+            [$entries, $hash] = $this->catalog->scan($this->fs);
+        } catch (FilesystemException $e) {
+            $this->logger->error('Storage listing failed', ['error' => $e->getMessage()]);
+            return $this->errorResponse(503, 'storage_unavailable');
+        }
 
-        // Step 2: hash match.
         $cached = $this->cache->readIfHashMatches($hash);
         if ($cached !== null) {
             return $this->jsonResponse(200, $cached);
         }
 
-        // Step 3: rebuild.
         $json = $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
@@ -54,10 +58,28 @@ final class Controller
     public function dist(ServerRequestInterface $request, array $args): ResponseInterface
     {
         $path = "{$args['vendor']}/{$args['package']}/{$args['version']}.zip";
+
+        try {
+            $exists = $this->fs->fileExists($path);
+        } catch (FilesystemException $e) {
+            $this->logger->error('Failed to check ZIP existence', [
+                'path' => $path,
+                'error' => $e->getMessage(),
+            ]);
+            return $this->errorResponse(502, 'storage_unavailable');
+        }
+        if (!$exists) {
+            return (new Response())->withStatus(404);
+        }
+
         try {
             $stream = $this->fs->readStream($path);
-        } catch (UnableToReadFile) {
-            return (new Response())->withStatus(404);
+        } catch (FilesystemException $e) {
+            $this->logger->error('Failed to stream ZIP', [
+                'path' => $path,
+                'error' => $e->getMessage(),
+            ]);
+            return $this->errorResponse(502, 'storage_unavailable');
         }
 
         $body = new Stream($stream);
@@ -71,7 +93,13 @@ final class Controller
     {
         $start = microtime(true);
         $this->cache->invalidate();
-        [$entries, $hash] = $this->catalog->scan($this->fs);
+
+        try {
+            [$entries, $hash] = $this->catalog->scan($this->fs);
+        } catch (FilesystemException $e) {
+            $this->logger->error('Storage listing failed during rebuild', ['error' => $e->getMessage()]);
+            return $this->errorResponse(503, 'storage_unavailable');
+        }
 
         $result = null;
         $this->cache->rebuild($hash, function () use ($entries, &$result) {
@@ -99,5 +127,13 @@ final class Controller
         return $resp
             ->withStatus($status)
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    private function errorResponse(int $status, string $errorCode): ResponseInterface
+    {
+        return $this->jsonResponse(
+            $status,
+            (string) json_encode(['error' => $errorCode], JSON_UNESCAPED_SLASHES)
+        );
     }
 }

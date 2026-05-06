@@ -19,10 +19,11 @@ final class App
         $controller = new Controller(
             fs: $fs,
             catalog: new Catalog(),
-            zipMetadata: new ZipMetadata(),
+            zipMetadata: new ZipMetadata($logger),
             packagesJson: new PackagesJson($logger),
             cache: new Cache($config->cacheDir(), $config->listingTtlSeconds()),
             baseUrl: $config->baseUrl(),
+            logger: $logger,
         );
 
         $auth = new Auth($config->authUser(), $config->authPass());

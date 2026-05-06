@@ -108,4 +108,78 @@ final class ControllerTest extends TestCase
         self::assertSame(1, $decoded['packages']);
         self::assertSame(1, $decoded['versions']);
     }
+
+    public function testPackagesEndpointReturns503OnStorageListingFailure(): void
+    {
+        $fs = new \Composerd\Tests\Support\ThrowingFilesystem();
+        $fs->failListContents();
+        $controller = new Controller(
+            fs: $fs,
+            catalog: new Catalog(),
+            zipMetadata: new ZipMetadata(),
+            packagesJson: new PackagesJson(new NullLogger()),
+            cache: new Cache($this->cacheDir, 0),
+            baseUrl: 'https://example.com',
+            logger: new NullLogger(),
+        );
+
+        $resp = $controller->packages(new ServerRequest());
+        self::assertSame(503, $resp->getStatusCode());
+        self::assertSame('application/json', $resp->getHeaderLine('Content-Type'));
+        self::assertSame(
+            ['error' => 'storage_unavailable'],
+            json_decode((string) $resp->getBody(), true)
+        );
+    }
+
+    public function testRebuildEndpointReturns503OnStorageListingFailure(): void
+    {
+        $fs = new \Composerd\Tests\Support\ThrowingFilesystem();
+        $fs->failListContents();
+        $controller = new Controller(
+            fs: $fs,
+            catalog: new Catalog(),
+            zipMetadata: new ZipMetadata(),
+            packagesJson: new PackagesJson(new NullLogger()),
+            cache: new Cache($this->cacheDir, 0),
+            baseUrl: 'https://example.com',
+            logger: new NullLogger(),
+        );
+
+        $resp = $controller->rebuild(new ServerRequest());
+        self::assertSame(503, $resp->getStatusCode());
+        self::assertSame(
+            ['error' => 'storage_unavailable'],
+            json_decode((string) $resp->getBody(), true)
+        );
+    }
+
+    public function testDistEndpointReturns502OnStorageReadFailure(): void
+    {
+        $fs = new \Composerd\Tests\Support\ThrowingFilesystem();
+        $fs->write(
+            'acme/billing/1.2.0.zip',
+            \Composerd\Tests\Support\ZipBuilder::buildBytes(['name' => 'acme/billing', 'version' => '1.2.0'])
+        );
+        $fs->failReadStream();
+        $controller = new Controller(
+            fs: $fs,
+            catalog: new Catalog(),
+            zipMetadata: new ZipMetadata(),
+            packagesJson: new PackagesJson(new NullLogger()),
+            cache: new Cache($this->cacheDir, 0),
+            baseUrl: 'https://example.com',
+            logger: new NullLogger(),
+        );
+
+        $resp = $controller->dist(
+            new ServerRequest(),
+            ['vendor' => 'acme', 'package' => 'billing', 'version' => '1.2.0']
+        );
+        self::assertSame(502, $resp->getStatusCode());
+        self::assertSame(
+            ['error' => 'storage_unavailable'],
+            json_decode((string) $resp->getBody(), true)
+        );
+    }
 }
