@@ -32,7 +32,7 @@ final class PackagesJson
         foreach ($entries as $entry) {
             $meta = $reader($entry);
             if ($meta === null) {
-                $this->logger->warning('Skipping unreadable ZIP', ['path' => $entry->path]);
+                // Cause was already logged by the metadata reader.
                 $skipped++;
                 continue;
             }
