@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-final class Auth implements MiddlewareInterface
+final readonly class Auth implements MiddlewareInterface
 {
     public function __construct(
         private string $user,

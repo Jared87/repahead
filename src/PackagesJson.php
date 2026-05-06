@@ -15,7 +15,7 @@ final readonly class PackagesJsonResult
     ) {}
 }
 
-final class PackagesJson
+final readonly class PackagesJson
 {
     public function __construct(private LoggerInterface $logger) {}
 

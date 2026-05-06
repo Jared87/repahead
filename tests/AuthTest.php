@@ -16,7 +16,7 @@ final class AuthTest extends TestCase
     private function handler(string $body = 'OK'): RequestHandlerInterface
     {
         return new class($body) implements RequestHandlerInterface {
-            public function __construct(private string $body) {}
+            public function __construct(private readonly string $body) {}
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $r = new Response();
@@ -30,7 +30,7 @@ final class AuthTest extends TestCase
     {
         $r = new ServerRequest();
         if ($user !== null) {
-            $r = $r->withHeader('Authorization', 'Basic ' . base64_encode("$user:$pass"));
+            return $r->withHeader('Authorization', 'Basic ' . base64_encode("$user:$pass"));
         }
         return $r;
     }

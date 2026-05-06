@@ -5,7 +5,7 @@ namespace Composerd;
 
 use InvalidArgumentException;
 
-final class Config
+final readonly class Config
 {
     private const REQUIRED = [
         'APP_BASE_URL',

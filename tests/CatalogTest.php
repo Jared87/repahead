@@ -34,7 +34,7 @@ final class CatalogTest extends TestCase
 
         self::assertCount(3, $entries);
         self::assertContainsOnlyInstancesOf(CatalogEntry::class, $entries);
-        $names = array_map(fn(CatalogEntry $e) => "{$e->vendor}/{$e->package}@{$e->version}", $entries);
+        $names = array_map(fn(CatalogEntry $e): string => "{$e->vendor}/{$e->package}@{$e->version}", $entries);
         sort($names);
         self::assertSame(
             ['acme/billing@1.2.0', 'acme/billing@1.3.0', 'beta/sdk@2.0.0'],

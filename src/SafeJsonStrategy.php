@@ -23,7 +23,7 @@ final class SafeJsonStrategy extends JsonStrategy
 {
     public function __construct(
         ResponseFactoryInterface $responseFactory,
-        private LoggerInterface $logger = new NullLogger(),
+        private readonly LoggerInterface $logger = new NullLogger(),
     ) {
         parent::__construct($responseFactory);
     }
@@ -32,8 +32,8 @@ final class SafeJsonStrategy extends JsonStrategy
     {
         return new class ($this->logger, $this->responseFactory) implements MiddlewareInterface {
             public function __construct(
-                private LoggerInterface $logger,
-                private ResponseFactoryInterface $responseFactory,
+                private readonly LoggerInterface $logger,
+                private readonly ResponseFactoryInterface $responseFactory,
             ) {}
 
             public function process(

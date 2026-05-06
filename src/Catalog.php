@@ -33,7 +33,7 @@ final class Catalog
 
         usort(
             $entries,
-            fn(CatalogEntry $a, CatalogEntry $b) => strcmp($a->path, $b->path)
+            fn(CatalogEntry $a, CatalogEntry $b): int => strcmp($a->path, $b->path)
         );
 
         $hashInput = '';

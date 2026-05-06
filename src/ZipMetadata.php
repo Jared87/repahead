@@ -9,7 +9,7 @@ use Psr\Log\NullLogger;
 use Throwable;
 use ZipArchive;
 
-final class ZipMetadata
+final readonly class ZipMetadata
 {
     public function __construct(private LoggerInterface $logger = new NullLogger()) {}
 

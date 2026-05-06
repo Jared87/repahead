@@ -5,7 +5,7 @@ namespace Composerd;
 
 use RuntimeException;
 
-final class Cache
+final readonly class Cache
 {
     private string $packagesFile;
     private string $hashFile;
@@ -26,19 +26,29 @@ final class Cache
 
     public function readIfFresh(): ?string
     {
-        if ($this->ttlSeconds <= 0) return null;
-        if (!is_file($this->packagesFile) || !is_file($this->hashFile)) return null;
+        if ($this->ttlSeconds <= 0) {
+            return null;
+        }
+        if (!is_file($this->packagesFile) || !is_file($this->hashFile)) {
+            return null;
+        }
         clearstatcache();
         $age = time() - (int) filemtime($this->hashFile);
-        if ($age >= $this->ttlSeconds) return null;
+        if ($age >= $this->ttlSeconds) {
+            return null;
+        }
         return file_get_contents($this->packagesFile) ?: null;
     }
 
     public function readIfHashMatches(string $hash): ?string
     {
-        if (!is_file($this->packagesFile) || !is_file($this->hashFile)) return null;
+        if (!is_file($this->packagesFile) || !is_file($this->hashFile)) {
+            return null;
+        }
         $stored = trim((string) file_get_contents($this->hashFile));
-        if ($stored !== $hash) return null;
+        if ($stored !== $hash) {
+            return null;
+        }
         @touch($this->hashFile);
         return file_get_contents($this->packagesFile) ?: null;
     }

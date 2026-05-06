@@ -12,7 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-final class Controller
+final readonly class Controller
 {
     public function __construct(
         private Filesystem $fs,
@@ -46,7 +46,7 @@ final class Controller
         $json = $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
-                fn(CatalogEntry $e) => $this->zipMetadata->read($this->fs, $e->path),
+                fn(CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             )->json;
         });
@@ -105,7 +105,7 @@ final class Controller
         $this->cache->rebuild($hash, function () use ($entries, &$result) {
             $result = $this->packagesJson->build(
                 $entries,
-                fn(CatalogEntry $e) => $this->zipMetadata->read($this->fs, $e->path),
+                fn(CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             );
             return $result->json;
