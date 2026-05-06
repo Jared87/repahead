@@ -17,8 +17,9 @@
         "psr/log": "^3.0"
     },
     "require-dev": {
+        "league/flysystem-memory": "^3.28",
         "phpunit/phpunit": "^10.5",
-        "league/flysystem-memory": "^3.28"
+        "rector/rector": "^2.4"
     },
     "autoload": {
         "psr-4": { "Composerd\\": "src/" }
@@ -28,5 +29,10 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "rector": "rector",
+        "rector:dry": "rector --dry-run"
     }
 }

@@ -7,3 +7,4 @@
 !/zips/.gitkeep
 .phpunit.result.cache
 .phpunit.cache/
+/rector-cache/
