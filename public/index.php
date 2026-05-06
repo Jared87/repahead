@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Composerd\App;
-use Composerd\Config;
-use Composerd\StderrLogger;
-use Composerd\Storage;
+use RepAhead\App;
+use RepAhead\Config;
+use RepAhead\StderrLogger;
+use RepAhead\Storage;
 use Dotenv\Dotenv;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;

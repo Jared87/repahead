@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd;
+namespace RepAhead;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Stream;
@@ -48,7 +48,7 @@ final readonly class Controller
         $json = $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
-                fn (CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (CatalogEntry $e): ?\RepAhead\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             )->json;
         });
@@ -107,14 +107,14 @@ final readonly class Controller
         $this->cache->rebuild($hash, function () use ($entries, &$result) {
             $result = $this->packagesJson->build(
                 $entries,
-                fn (CatalogEntry $e): ?\Composerd\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (CatalogEntry $e): ?\RepAhead\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             );
             return $result->json;
         });
 
         // invalidate() above guarantees Cache::rebuild calls the closure, so $result is set.
-        \assert($result instanceof \Composerd\PackagesJsonResult);
+        \assert($result instanceof \RepAhead\PackagesJsonResult);
         $summary = [
             'packages' => $result->packagesCount,
             'versions' => $result->versionsCount,

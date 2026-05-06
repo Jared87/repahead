@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests\Support;
+namespace RepAhead\Tests\Support;
 
 use ZipArchive;
 
@@ -39,7 +39,7 @@ final class ZipBuilder
      */
     public static function buildBytes(array $composerJson, array $extraFiles = []): string
     {
-        $tmp = tempnam(sys_get_temp_dir(), 'composerd-zip');
+        $tmp = tempnam(sys_get_temp_dir(), 'repahead-zip');
         if ($tmp === false) {
             throw new \RuntimeException('tempnam failed');
         }

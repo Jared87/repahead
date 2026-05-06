@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\App;
-use Composerd\Config;
-use Composerd\Tests\Support\ZipBuilder;
+use RepAhead\App;
+use RepAhead\Config;
+use RepAhead\Tests\Support\ZipBuilder;
 use Laminas\Diactoros\ServerRequest;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
@@ -20,7 +20,7 @@ final class EndToEndTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->cacheDir = sys_get_temp_dir() . '/composerd-e2e-' . bin2hex(random_bytes(4));
+        $this->cacheDir = sys_get_temp_dir() . '/repahead-e2e-' . bin2hex(random_bytes(4));
         mkdir($this->cacheDir);
 
         $this->config = new Config([
@@ -103,7 +103,7 @@ final class EndToEndTest extends TestCase
     public function testSafeJsonStrategySanitisesUncaughtException(): void
     {
         $router = new \League\Route\Router();
-        $router->setStrategy(new \Composerd\SafeJsonStrategy(new \Laminas\Diactoros\ResponseFactory()));
+        $router->setStrategy(new \RepAhead\SafeJsonStrategy(new \Laminas\Diactoros\ResponseFactory()));
         $router->get('/boom', function (): \Psr\Http\Message\ResponseInterface {
             throw new \RuntimeException('Cache directory does not exist: /var/private/leak');
         });

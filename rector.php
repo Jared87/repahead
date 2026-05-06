@@ -10,7 +10,7 @@ use Rector\TypeDeclaration\Rector\Closure\ClosureReturnTypeRector;
 
 return RectorConfig::configure()
     ->withPaths([
-        __DIR__ . '/src',
+        __DIR__ . '/app',
         __DIR__ . '/tests',
         __DIR__ . '/public',
     ])

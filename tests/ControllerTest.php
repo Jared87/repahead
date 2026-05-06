@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\Cache;
-use Composerd\Catalog;
-use Composerd\Controller;
-use Composerd\PackagesJson;
-use Composerd\Tests\Support\ZipBuilder;
-use Composerd\ZipMetadata;
+use RepAhead\Cache;
+use RepAhead\Catalog;
+use RepAhead\Controller;
+use RepAhead\PackagesJson;
+use RepAhead\Tests\Support\ZipBuilder;
+use RepAhead\ZipMetadata;
 use Laminas\Diactoros\ServerRequest;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
@@ -24,7 +24,7 @@ final class ControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->cacheDir = sys_get_temp_dir() . '/composerd-ctrl-' . bin2hex(random_bytes(4));
+        $this->cacheDir = sys_get_temp_dir() . '/repahead-ctrl-' . bin2hex(random_bytes(4));
         mkdir($this->cacheDir);
 
         $this->fs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -114,7 +114,7 @@ final class ControllerTest extends TestCase
 
     public function testPackagesEndpointReturns503OnStorageListingFailure(): void
     {
-        $fs = new \Composerd\Tests\Support\ThrowingFilesystem();
+        $fs = new \RepAhead\Tests\Support\ThrowingFilesystem();
         $fs->failListContents();
         $controller = new Controller(
             fs: $fs,
@@ -137,7 +137,7 @@ final class ControllerTest extends TestCase
 
     public function testRebuildEndpointReturns503OnStorageListingFailure(): void
     {
-        $fs = new \Composerd\Tests\Support\ThrowingFilesystem();
+        $fs = new \RepAhead\Tests\Support\ThrowingFilesystem();
         $fs->failListContents();
         $controller = new Controller(
             fs: $fs,
@@ -159,10 +159,10 @@ final class ControllerTest extends TestCase
 
     public function testDistEndpointReturns502OnStorageReadFailure(): void
     {
-        $fs = new \Composerd\Tests\Support\ThrowingFilesystem();
+        $fs = new \RepAhead\Tests\Support\ThrowingFilesystem();
         $fs->write(
             'acme/billing/1.2.0.zip',
-            \Composerd\Tests\Support\ZipBuilder::buildBytes(['name' => 'acme/billing', 'version' => '1.2.0'])
+            \RepAhead\Tests\Support\ZipBuilder::buildBytes(['name' => 'acme/billing', 'version' => '1.2.0'])
         );
         $fs->failReadStream();
         $controller = new Controller(

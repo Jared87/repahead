@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd;
+namespace RepAhead;
 
 final readonly class ZipMeta
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests\Support;
+namespace RepAhead\Tests\Support;
 
 use League\Flysystem\DirectoryListing;
 use League\Flysystem\Filesystem;

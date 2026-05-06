@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\Storage;
+use RepAhead\Storage;
 use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ final class StorageTest extends TestCase
 
     public function testLocalDsnWritesAndReadsThrough(): void
     {
-        $tmp = sys_get_temp_dir() . '/composerd-storage-' . bin2hex(random_bytes(4));
+        $tmp = sys_get_temp_dir() . '/repahead-storage-' . bin2hex(random_bytes(4));
         mkdir($tmp);
         try {
             $fs = (new Storage([]))->make("local:$tmp");

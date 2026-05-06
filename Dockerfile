@@ -11,7 +11,7 @@ RUN composer install --no-dev --no-scripts --no-progress --prefer-dist \
     && composer clear-cache
 
 COPY --chown=www-data:www-data public ./public
-COPY --chown=www-data:www-data src ./src
+COPY --chown=www-data:www-data app ./app
 COPY --chown=www-data:www-data .env.example ./.env.example
 
 # zips/ and cache/ are mounted as volumes by compose.yml

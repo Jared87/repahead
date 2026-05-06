@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd;
+namespace RepAhead;
 
 use League\Route\Http;
 use League\Route\Strategy\JsonStrategy;

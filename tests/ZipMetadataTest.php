@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\ZipMetadata;
-use Composerd\Tests\Support\ZipBuilder;
+use RepAhead\ZipMetadata;
+use RepAhead\Tests\Support\ZipBuilder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;

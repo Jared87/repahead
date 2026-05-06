@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\Cache;
+use RepAhead\Cache;
 use PHPUnit\Framework\TestCase;
 
 final class CacheTest extends TestCase
@@ -13,7 +13,7 @@ final class CacheTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->dir = sys_get_temp_dir() . '/composerd-cache-' . bin2hex(random_bytes(4));
+        $this->dir = sys_get_temp_dir() . '/repahead-cache-' . bin2hex(random_bytes(4));
         mkdir($this->dir);
     }
 

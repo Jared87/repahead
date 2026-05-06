@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd;
+namespace RepAhead;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ResponseFactory;

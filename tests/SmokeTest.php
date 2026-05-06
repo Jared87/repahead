@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
 use PHPUnit\Framework\TestCase;
 
@@ -11,6 +11,6 @@ final class SmokeTest extends TestCase
     public function testAutoloaderIsWired(): void
     {
         self::assertTrue(class_exists(\PHPUnit\Framework\TestCase::class));
-        self::assertSame('Composerd\\Tests', __NAMESPACE__);
+        self::assertSame('RepAhead\\Tests', __NAMESPACE__);
     }
 }

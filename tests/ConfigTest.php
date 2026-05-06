@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\Config;
+use RepAhead\Config;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

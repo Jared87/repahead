@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\Catalog;
-use Composerd\CatalogEntry;
-use Composerd\Tests\Support\ZipBuilder;
+use RepAhead\Catalog;
+use RepAhead\CatalogEntry;
+use RepAhead\Tests\Support\ZipBuilder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\TestCase;

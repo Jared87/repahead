@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Composerd;
+namespace RepAhead;
 
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
@@ -18,7 +18,7 @@ final readonly class ZipMetadata
 
     public function read(Filesystem $fs, string $path): ?ZipMeta
     {
-        $tmp = tempnam(sys_get_temp_dir(), 'composerd-zip');
+        $tmp = tempnam(sys_get_temp_dir(), 'repahead-zip');
         if ($tmp === false) {
             $this->logger->warning('Skipping ZIP: tempnam failed', ['path' => $path]);
             return null;

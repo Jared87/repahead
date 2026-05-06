@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Composerd\Tests;
+namespace RepAhead\Tests;
 
-use Composerd\Auth;
+use RepAhead\Auth;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
