@@ -103,7 +103,7 @@ final class EndToEndTest extends TestCase
     public function testSafeJsonStrategySanitisesUncaughtException(): void
     {
         $router = new \League\Route\Router();
-        $router->setStrategy(new \RepAhead\SafeJsonStrategy(new \Laminas\Diactoros\ResponseFactory()));
+        $router->setStrategy(new \RepAhead\Http\SafeJsonStrategy(new \Laminas\Diactoros\ResponseFactory()));
         $router->get('/boom', function (): \Psr\Http\Message\ResponseInterface {
             throw new \RuntimeException('Cache directory does not exist: /var/private/leak');
         });

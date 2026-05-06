@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace RepAhead\Tests;
+namespace RepAhead\Tests\Catalog;
 
-use RepAhead\Catalog;
-use RepAhead\CatalogEntry;
+use RepAhead\Catalog\Catalog;
+use RepAhead\Catalog\CatalogEntry;
 use RepAhead\Tests\Support\ZipBuilder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;

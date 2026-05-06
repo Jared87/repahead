@@ -12,6 +12,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use RepAhead\Catalog\Catalog;
+use RepAhead\Catalog\PackagesJson;
+use RepAhead\Catalog\ZipMetadata;
+use RepAhead\Http\Auth;
+use RepAhead\Http\Controller;
+use RepAhead\Http\SafeJsonStrategy;
 use Throwable;
 
 final class App

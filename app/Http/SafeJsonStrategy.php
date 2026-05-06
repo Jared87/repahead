@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RepAhead;
+namespace RepAhead\Http;
 
 use League\Route\Http;
 use League\Route\Strategy\JsonStrategy;
