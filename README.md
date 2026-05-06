@@ -65,7 +65,7 @@ See `.env.example`. Key vars:
 composer install
 cp .env.example .env
 php -S 127.0.0.1:8080 -t public
-vendor/bin/phpunit
+composer test     # full suite (also: composer stan, composer pint, composer rector)
 ```
 
 ## Failure modes

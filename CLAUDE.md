@@ -43,7 +43,7 @@ Each tool has a dry/preview mode if you want to inspect first:
 
 - PHP 8.2+. Strict types in every file (`declare(strict_types=1)`).
 - PSR-4 autoload: `RepAhead\\` → `app/`, `RepAhead\\Tests\\` → `tests/`.
-- Tests sit beside the unit they cover (e.g. `app/Cache.php` ↔ `tests/CacheTest.php`).
+- Tests mirror the `app/` layout: `app/Http/Controller.php` ↔ `tests/Http/ControllerTest.php`, `app/Catalog/Catalog.php` ↔ `tests/Catalog/CatalogTest.php`. Cross-cutting tests (Config, Cache, Storage, EndToEnd, Smoke) stay at `tests/` root, matching the cross-cutting production files at `app/` root.
 - The implementation plan lives at `docs/superpowers/plans/` and the design
   spec at `docs/superpowers/specs/`. Both are committed history — read them
   before making structural changes.
