@@ -1,0 +1,73 @@
+# Private Composer Server
+
+A small PHP service that exposes a private Composer (Packagist-compatible) repository whose content is driven by **dropping ZIP files into a folder**. Storage is pluggable via Flysystem (local disk or S3).
+
+See [docs/superpowers/specs/2026-05-06-composer-server-design.md](docs/superpowers/specs/2026-05-06-composer-server-design.md) for the full design.
+
+## Quick start (Docker)
+
+```bash
+cp .env.example .env
+# edit AUTH_PASS at minimum
+AUTH_PASS=$(grep AUTH_PASS .env | cut -d= -f2) docker compose up -d --build
+```
+
+The service listens on `http://localhost:8080`. Drop ZIPs into the `composer-zips` volume:
+
+```bash
+docker compose cp ./acme-billing-1.2.0.zip composer:/var/www/html/zips/acme/billing/1.2.0.zip
+curl -u ci:secret -X POST http://localhost:8080/rebuild
+```
+
+## Folder layout for ZIPs
+
+```
+zips/
+  vendor/
+    package/
+      1.0.0.zip
+      1.1.0.zip
+```
+
+The `composer.json` inside each ZIP is the source of truth for `require`, `autoload`, etc. The folder path determines `vendor/package`; the filename determines the version.
+
+## Endpoints
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| GET | `/packages.json` | Composer repository index (cached) |
+| GET | `/dist/{vendor}/{package}/{version}.zip` | Streams the ZIP |
+| POST | `/rebuild` | Force cache rebuild; returns `{packages, versions, skipped, duration_ms}` |
+
+All endpoints use HTTP basic auth (`AUTH_USER` / `AUTH_PASS`).
+
+## Consumer setup
+
+In the consuming project:
+
+```bash
+composer config repositories.private composer https://composer.your-domain.com
+composer config http-basic.composer.your-domain.com ci &lt;password&gt;
+composer require acme/billing:^1.0
+```
+
+## Configuration
+
+See `.env.example`. Key vars:
+
+- `STORAGE_DSN=local:./zips` or `s3:my-bucket/composer/zips`
+- `LISTING_TTL_SECONDS=30` — how long the cache lives between storage listings (`0` = list every request)
+- `AUTH_USER`, `AUTH_PASS` — single shared HTTP basic credential
+
+## Local development
+
+```bash
+composer install
+cp .env.example .env
+php -S 127.0.0.1:8080 -t public
+vendor/bin/phpunit
+```
+
+## Failure modes
+
+ZIPs that are corrupt, missing `composer.json`, or whose `composer.json` `name` field doesn't match the folder path are **skipped** (logged to stderr). The skipped count is included in `POST /rebuild` responses.
