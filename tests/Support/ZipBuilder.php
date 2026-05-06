@@ -20,14 +20,22 @@ final class ZipBuilder
         if ($rc !== true) {
             throw new \RuntimeException("Failed to open ZIP for writing: $path (code $rc)");
         }
-        $zip->addFromString('composer.json', json_encode($composerJson, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+        $zip->addFromString(
+            'composer.json',
+            (string) json_encode($composerJson, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+        );
         foreach ($extraFiles as $name => $content) {
             $zip->addFromString($name, $content);
         }
         $zip->close();
     }
 
-    /** Returns binary contents of a ZIP built in a temp path then read+deleted. */
+    /**
+     * Returns binary contents of a ZIP built in a temp path then read+deleted.
+     *
+     * @param array<string,mixed> $composerJson
+     * @param array<string,string> $extraFiles
+     */
     public static function buildBytes(array $composerJson, array $extraFiles = []): string
     {
         $tmp = tempnam(sys_get_temp_dir(), 'composerd-zip');

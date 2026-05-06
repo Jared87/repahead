@@ -66,9 +66,13 @@ final class App
         $router->middleware($auth);
 
         $router->get('/packages.json', fn(ServerRequestInterface $req): ResponseInterface => $controller->packages($req));
-        $router->get('/dist/{vendor}/{package}/{version}.zip', function (ServerRequestInterface $req, array $args) use ($controller): ResponseInterface {
-            return $controller->dist($req, $args);
-        });
+        $router->get(
+            '/dist/{vendor}/{package}/{version}.zip',
+            function (ServerRequestInterface $req, array $args) use ($controller): ResponseInterface {
+                /** @var array{vendor: string, package: string, version: string} $args */
+                return $controller->dist($req, $args);
+            },
+        );
         $router->post('/rebuild', fn(ServerRequestInterface $req): ResponseInterface => $controller->rebuild($req));
 
         return $router;

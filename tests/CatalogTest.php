@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CatalogTest extends TestCase
 {
+    /** @param array<string,string> $files */
     private function fsWith(array $files): Filesystem
     {
         $fs = new Filesystem(new InMemoryFilesystemAdapter());

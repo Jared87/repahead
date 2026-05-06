@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 final class ConfigTest extends TestCase
 {
+    /** @return array<string,string> */
     private function defaults(): array
     {
         return [

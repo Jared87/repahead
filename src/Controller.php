@@ -111,10 +111,12 @@ final readonly class Controller
             return $result->json;
         });
 
+        // invalidate() above guarantees Cache::rebuild calls the closure, so $result is set.
+        \assert($result !== null);
         $summary = [
-            'packages' => $result?->packagesCount ?? 0,
-            'versions' => $result?->versionsCount ?? 0,
-            'skipped' => $result?->skippedCount ?? 0,
+            'packages' => $result->packagesCount,
+            'versions' => $result->versionsCount,
+            'skipped' => $result->skippedCount,
             'duration_ms' => (int) round((microtime(true) - $start) * 1000),
         ];
         return $this->jsonResponse(200, (string) json_encode($summary, JSON_UNESCAPED_SLASHES));

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Composerd;
 
+use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 
 final class Catalog
@@ -14,7 +15,7 @@ final class Catalog
     {
         $entries = [];
         foreach ($fs->listContents('', true) as $item) {
-            if (!$item->isFile()) {
+            if (!$item instanceof FileAttributes) {
                 continue;
             }
             $path = $item->path();
