@@ -5,16 +5,17 @@
     "license": "proprietary",
     "require": {
         "php": ">=8.2",
-        "ext-zip": "*",
-        "ext-json": "*",
         "ext-fileinfo": "*",
-        "league/route": "^6.2",
-        "league/flysystem": "^3.28",
-        "league/flysystem-aws-s3-v3": "^3.28",
+        "ext-json": "*",
+        "ext-zip": "*",
         "laminas/laminas-diactoros": "^3.4",
         "laminas/laminas-httphandlerrunner": "^2.10",
-        "vlucas/phpdotenv": "^5.6",
-        "psr/log": "^3.0"
+        "league/flysystem": "^3.28",
+        "league/flysystem-aws-s3-v3": "^3.28",
+        "league/route": "^6.2",
+        "monolog/monolog": "^3.0",
+        "psr/log": "^3.0",
+        "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
         "laravel/pint": "^1.29",
