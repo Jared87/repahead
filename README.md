@@ -47,7 +47,7 @@ In the consuming project:
 
 ```bash
 composer config repositories.private composer https://composer.your-domain.com
-composer config http-basic.composer.your-domain.com ci &lt;password&gt;
+composer config http-basic.composer.your-domain.com ci <password>
 composer require acme/billing:^1.0
 ```
 
