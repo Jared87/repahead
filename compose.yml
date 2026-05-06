@@ -1,0 +1,27 @@
+services:
+  composer:
+    build: .
+    image: repahead/composer-server:dev
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-:8080}
+      AUTOMATIC_HTTPS: "off"
+      PHP_OPCACHE_ENABLE: "1"
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:8080}
+      STORAGE_DSN: ${STORAGE_DSN:-local:/var/www/html/zips}
+      CACHE_DIR: /var/www/html/cache
+      LISTING_TTL_SECONDS: ${LISTING_TTL_SECONDS:-30}
+      AUTH_USER: ${AUTH_USER:-ci}
+      AUTH_PASS: ${AUTH_PASS:?AUTH_PASS is required}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-}
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    volumes:
+      - composer-zips:/var/www/html/zips
+      - composer-cache:/var/www/html/cache
+    restart: unless-stopped
+
+volumes:
+  composer-zips:
+  composer-cache:
