@@ -152,7 +152,9 @@ final class SmokeTest extends TestCase
 </phpunit>
 ```
 
-- [ ] **Step 4: Create `.gitignore`**
+- [ ] **Step 4: Append project rules to `.gitignore`**
+
+The repo already has a `.gitignore` containing `.idea/`. Append (don't overwrite) the following so the file ends with these rules:
 
 ```
 /vendor/
@@ -164,6 +166,8 @@ final class SmokeTest extends TestCase
 .phpunit.result.cache
 .phpunit.cache/
 ```
+
+The final file should contain both `.idea/` and the rules above.
 
 - [ ] **Step 5: Create `.env.example`**
 
