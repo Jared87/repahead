@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RepAhead;
+namespace RepAhead\Catalog;
 
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;

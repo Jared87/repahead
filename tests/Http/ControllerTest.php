@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace RepAhead\Tests;
+namespace RepAhead\Tests\Http;
 
 use RepAhead\Cache;
-use RepAhead\Catalog;
-use RepAhead\Controller;
-use RepAhead\PackagesJson;
+use RepAhead\Catalog\Catalog;
+use RepAhead\Catalog\PackagesJson;
+use RepAhead\Catalog\ZipMetadata;
+use RepAhead\Http\Controller;
 use RepAhead\Tests\Support\ZipBuilder;
-use RepAhead\ZipMetadata;
 use Laminas\Diactoros\ServerRequest;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;

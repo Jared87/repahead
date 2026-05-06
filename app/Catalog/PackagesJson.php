@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RepAhead;
+namespace RepAhead\Catalog;
 
 use Psr\Log\LoggerInterface;
 

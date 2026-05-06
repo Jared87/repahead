@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace RepAhead\Tests;
+namespace RepAhead\Tests\Catalog;
 
-use RepAhead\ZipMetadata;
+use RepAhead\Catalog\ZipMetadata;
 use RepAhead\Tests\Support\ZipBuilder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;

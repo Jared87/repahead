@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RepAhead;
+namespace RepAhead\Http;
 
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Stream;
@@ -12,6 +12,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use RepAhead\Cache;
+use RepAhead\Catalog\Catalog;
+use RepAhead\Catalog\CatalogEntry;
+use RepAhead\Catalog\PackagesJson;
+use RepAhead\Catalog\PackagesJsonResult;
+use RepAhead\Catalog\ZipMeta;
+use RepAhead\Catalog\ZipMetadata;
 
 final readonly class Controller
 {
@@ -48,7 +55,7 @@ final readonly class Controller
         $json = $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
-                fn (CatalogEntry $e): ?\RepAhead\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (CatalogEntry $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             )->json;
         });
@@ -107,14 +114,14 @@ final readonly class Controller
         $this->cache->rebuild($hash, function () use ($entries, &$result) {
             $result = $this->packagesJson->build(
                 $entries,
-                fn (CatalogEntry $e): ?\RepAhead\ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (CatalogEntry $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             );
             return $result->json;
         });
 
         // invalidate() above guarantees Cache::rebuild calls the closure, so $result is set.
-        \assert($result instanceof \RepAhead\PackagesJsonResult);
+        \assert($result instanceof PackagesJsonResult);
         $summary = [
             'packages' => $result->packagesCount,
             'versions' => $result->versionsCount,

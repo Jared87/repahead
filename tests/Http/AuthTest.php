@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace RepAhead\Tests;
+namespace RepAhead\Tests\Http;
 
-use RepAhead\Auth;
+use RepAhead\Http\Auth;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
