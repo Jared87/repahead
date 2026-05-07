@@ -90,6 +90,10 @@ Upload ZIPs to S3 in the same `vendor/package/version.zip` layout used for local
 Image: [`tredmann/repahead`](https://hub.docker.com/r/tredmann/repahead)
 
 ```bash
+# minimal — only AUTH_PASS is required
+docker run -d -p 8080:8080 -e AUTH_PASS=secret tredmann/repahead
+
+# production — set the public URL so dist links resolve correctly
 docker run -d \
   -p 8080:8080 \
   -e AUTH_PASS=secret \
@@ -104,7 +108,7 @@ docker run -d \
 |----------|---------|-------------|
 | `AUTH_PASS` | — | **Required.** HTTP basic auth password |
 | `AUTH_USER` | `ci` | HTTP basic auth username |
-| `APP_BASE_URL` | — | Public base URL; used in `packages.json` dist download links |
+| `APP_BASE_URL` | `http://localhost:8080` | Public base URL; used in `packages.json` dist download links |
 | `STORAGE_DSN` | `local:/var/www/html/zips` | Storage backend — `local:<path>` or `s3:<bucket>/<prefix>` |
 | `CACHE_DIR` | `/var/www/html/cache` | Directory for the `packages.json` cache and hash files |
 | `LISTING_TTL_SECONDS` | `30` | Seconds before the storage listing cache expires; `0` = list on every request |
