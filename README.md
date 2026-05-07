@@ -85,6 +85,36 @@ The service only reads from S3 (list + download). The minimum IAM policy for the
 
 Upload ZIPs to S3 in the same `vendor/package/version.zip` layout used for local storage, then `POST /rebuild` to refresh the index.
 
+## Docker Hub
+
+Image: [`tredmann/repahead`](https://hub.docker.com/r/tredmann/repahead)
+
+```bash
+docker run -d \
+  -p 8080:8080 \
+  -e AUTH_PASS=secret \
+  -e APP_BASE_URL=https://composer.your-domain.com \
+  -v /path/to/zips:/var/www/html/zips \
+  tredmann/repahead
+```
+
+### Environment variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `AUTH_PASS` | — | **Required.** HTTP basic auth password |
+| `AUTH_USER` | `ci` | HTTP basic auth username |
+| `APP_BASE_URL` | — | Public base URL; used in `packages.json` dist download links |
+| `STORAGE_DSN` | `local:/var/www/html/zips` | Storage backend — `local:<path>` or `s3:<bucket>/<prefix>` |
+| `CACHE_DIR` | `/var/www/html/cache` | Directory for the `packages.json` cache and hash files |
+| `LISTING_TTL_SECONDS` | `30` | Seconds before the storage listing cache expires; `0` = list on every request |
+| `AWS_ACCESS_KEY_ID` | — | S3 only — AWS access key ID |
+| `AWS_SECRET_ACCESS_KEY` | — | S3 only — AWS secret access key |
+| `AWS_REGION` | — | S3 only — AWS region, e.g. `eu-central-1` |
+| `SERVER_NAME` | `:8080` | Listen address and port (base image) |
+| `AUTOMATIC_HTTPS` | `off` | Auto-HTTPS via FrankenPHP/Caddy; keep `off` behind a reverse proxy (base image) |
+| `PHP_OPCACHE_ENABLE` | `1` | Enable PHP OPcache (base image) |
+
 ## Local development
 
 ```bash
