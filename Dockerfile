@@ -1,4 +1,4 @@
-FROM serversideup/php:8.4-frankenphp
+FROM serversideup/php:8.5-frankenphp-alpine
 
 # Composer for installing PHP deps
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

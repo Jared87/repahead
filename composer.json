@@ -1,10 +1,10 @@
 {
-    "name": "repahead/composer-server",
+    "name": "tredmann/repahead",
     "description": "Static-feeling private Composer repository",
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.5",
         "ext-fileinfo": "*",
         "ext-json": "*",
         "ext-zip": "*",
