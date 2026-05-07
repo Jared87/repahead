@@ -59,6 +59,32 @@ See `.env.example`. Key vars:
 - `LISTING_TTL_SECONDS=30` — how long the cache lives between storage listings (`0` = list every request)
 - `AUTH_USER`, `AUTH_PASS` — single shared HTTP basic credential
 
+## S3 storage
+
+Set `STORAGE_DSN` to `s3:bucket-name` or `s3:bucket-name/optional/prefix`, then supply the three AWS credentials:
+
+```
+STORAGE_DSN=s3:my-bucket/composer/zips
+AWS_ACCESS_KEY_ID=AKIA...
+AWS_SECRET_ACCESS_KEY=...
+AWS_REGION=eu-central-1
+```
+
+The service only reads from S3 (list + download). The minimum IAM policy for the bucket is:
+
+```json
+{
+  "Effect": "Allow",
+  "Action": ["s3:ListBucket", "s3:GetObject"],
+  "Resource": [
+    "arn:aws:s3:::my-bucket",
+    "arn:aws:s3:::my-bucket/composer/zips/*"
+  ]
+}
+```
+
+Upload ZIPs to S3 in the same `vendor/package/version.zip` layout used for local storage, then `POST /rebuild` to refresh the index.
+
 ## Local development
 
 ```bash
