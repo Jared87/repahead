@@ -1,6 +1,6 @@
 # Private Composer Server
 
-A small PHP service that exposes a private Composer (Packagist-compatible) repository whose content is driven by **dropping ZIP files into a folder**. Storage is pluggable via Flysystem (local disk or S3).
+A small PHP service that exposes a private Composer (Packagist-compatible) repository. Publishers drop Release ZIPs into Storage; the service builds and serves the Index. Storage is pluggable via Flysystem (local disk or S3).
 
 See [docs/superpowers/specs/2026-05-06-composer-server-design.md](docs/superpowers/specs/2026-05-06-composer-server-design.md) for the full design.
 
@@ -12,7 +12,7 @@ cp .env.example .env
 AUTH_PASS=$(grep AUTH_PASS .env | cut -d= -f2) docker compose up -d --build
 ```
 
-The service listens on `http://localhost:8080`. Drop ZIPs into the `composer-zips` volume:
+The service listens on `http://localhost:8080`. Publish a Release to the `composer-zips` volume:
 
 ```bash
 docker compose cp ./acme-billing-1.2.0.zip composer:/var/www/html/zips/acme/billing/1.2.0.zip
@@ -29,15 +29,15 @@ zips/
       1.1.0.zip
 ```
 
-The `composer.json` inside each ZIP is the source of truth for `require`, `autoload`, etc. The folder path determines `vendor/package`; the filename determines the version.
+The folder path (`vendor/package`) determines the Package identity; the filename determines the Release version. The `composer.json` inside the ZIP is the source for `require`, `autoload`, etc. — but the path wins over `composer.json`'s `name` field if they disagree.
 
 ## Endpoints
 
 | Method | Route | Purpose |
 |--------|-------|---------|
-| GET | `/packages.json` | Composer repository index (cached) |
-| GET | `/dist/{vendor}/{package}/{version}.zip` | Streams the ZIP |
-| POST | `/rebuild` | Force cache rebuild; returns `{packages, versions, skipped, duration_ms}` |
+| GET | `/packages.json` | The Index — Composer repository index (cached) |
+| GET | `/dist/{vendor}/{package}/{version}.zip` | Stream a Release ZIP |
+| POST | `/rebuild` | Force an Index rebuild; returns `{packages, versions, skipped, duration_ms}` |
 
 All endpoints use HTTP basic auth (`AUTH_USER` / `AUTH_PASS`).
 
@@ -56,7 +56,7 @@ composer require acme/billing:^1.0
 See `.env.example`. Key vars:
 
 - `STORAGE_DSN=local:./zips` or `s3:my-bucket/composer/zips`
-- `LISTING_TTL_SECONDS=30` — how long the cache lives between storage listings (`0` = list every request)
+- `LISTING_TTL_SECONDS=30` — TTL tier: how long before Storage is re-listed (`0` = list on every request)
 - `AUTH_USER`, `AUTH_PASS` — single shared HTTP basic credential
 
 ## S3 storage
@@ -83,7 +83,7 @@ The service only reads from S3 (list + download). The minimum IAM policy for the
 }
 ```
 
-Upload ZIPs to S3 in the same `vendor/package/version.zip` layout used for local storage, then `POST /rebuild` to refresh the index.
+Publish Releases to S3 using the same `vendor/package/version.zip` layout as local Storage, then `POST /rebuild` to refresh the Index immediately.
 
 ## Docker Hub
 
@@ -111,7 +111,7 @@ docker run -d \
 | `APP_BASE_URL` | `http://localhost:8080` | Public base URL; used in `packages.json` dist download links |
 | `STORAGE_DSN` | `local:/var/www/html/zips` | Storage backend — `local:<path>` or `s3:<bucket>/<prefix>` |
 | `CACHE_DIR` | `/var/www/html/cache` | Directory for the `packages.json` cache and hash files |
-| `LISTING_TTL_SECONDS` | `30` | Seconds before the storage listing cache expires; `0` = list on every request |
+| `LISTING_TTL_SECONDS` | `30` | TTL tier: seconds before Storage is re-listed; `0` = list on every request |
 | `AWS_ACCESS_KEY_ID` | — | S3 only — AWS access key ID |
 | `AWS_SECRET_ACCESS_KEY` | — | S3 only — AWS secret access key |
 | `AWS_REGION` | — | S3 only — AWS region, e.g. `eu-central-1` |
@@ -130,4 +130,4 @@ composer test     # full suite (also: composer stan, composer pint, composer rec
 
 ## Failure modes
 
-ZIPs that are corrupt, missing `composer.json`, or whose `composer.json` `name` field doesn't match the folder path are **skipped** (logged to stderr). The skipped count is included in `POST /rebuild` responses.
+Releases that are corrupt, missing `composer.json`, or whose `composer.json` `name` field doesn't match the folder path are **Rejected** — excluded from the Index and logged to stderr. The Rejected count is included in `POST /rebuild` responses.

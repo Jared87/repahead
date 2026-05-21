@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RepAhead\Tests\Catalog;
 
-use RepAhead\Catalog\CatalogEntry;
+use RepAhead\Catalog\Release;
 use RepAhead\Catalog\PackagesJson;
 use RepAhead\Catalog\ZipMeta;
 use PHPUnit\Framework\TestCase;
@@ -12,9 +12,9 @@ use Psr\Log\NullLogger;
 
 final class PackagesJsonTest extends TestCase
 {
-    private function entry(string $vendor, string $package, string $version): CatalogEntry
+    private function entry(string $vendor, string $package, string $version): Release
     {
-        return new CatalogEntry(
+        return new Release(
             $vendor,
             $package,
             $version,
@@ -30,7 +30,7 @@ final class PackagesJsonTest extends TestCase
             $this->entry('acme', 'billing', '1.2.0'),
             $this->entry('acme', 'billing', '1.3.0'),
         ];
-        $reader = function (CatalogEntry $e): ZipMeta {
+        $reader = function (Release $e): ZipMeta {
             return new ZipMeta(
                 ['name' => "{$e->vendor}/{$e->package}", 'version' => $e->version, 'type' => 'library', 'require' => ['php' => '^8.2']],
                 str_repeat('a', 40)
@@ -69,7 +69,7 @@ final class PackagesJsonTest extends TestCase
             $this->entry('a', 'b', '1.0.0'),
             $this->entry('a', 'b', '2.0.0'),
         ];
-        $reader = fn (CatalogEntry $e): ?ZipMeta => $e->version === '2.0.0'
+        $reader = fn (Release $e): ?ZipMeta => $e->version === '2.0.0'
             ? null
             : new ZipMeta(['name' => 'a/b', 'version' => '1.0.0'], str_repeat('b', 40));
         $builder = new PackagesJson(new NullLogger());

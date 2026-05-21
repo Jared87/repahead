@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RepAhead\Tests\Catalog;
 
 use RepAhead\Catalog\Catalog;
-use RepAhead\Catalog\CatalogEntry;
+use RepAhead\Catalog\Release;
 use RepAhead\Tests\Support\ZipBuilder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
@@ -35,8 +35,8 @@ final class CatalogTest extends TestCase
         [$entries, $hash] = $catalog->scan($fs);
 
         self::assertCount(3, $entries);
-        self::assertContainsOnlyInstancesOf(CatalogEntry::class, $entries);
-        $names = array_map(fn (CatalogEntry $e): string => "{$e->vendor}/{$e->package}@{$e->version}", $entries);
+        self::assertContainsOnlyInstancesOf(Release::class, $entries);
+        $names = array_map(fn (Release $e): string => "{$e->vendor}/{$e->package}@{$e->version}", $entries);
         sort($names);
         self::assertSame(
             ['acme/billing@1.2.0', 'acme/billing@1.3.0', 'beta/sdk@2.0.0'],

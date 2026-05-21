@@ -26,8 +26,8 @@ final readonly class PackagesJson
     }
 
     /**
-     * @param iterable<CatalogEntry> $entries
-     * @param callable(CatalogEntry): ?ZipMeta $reader
+     * @param iterable<Release> $entries
+     * @param callable(Release): ?ZipMeta $reader
      */
     public function build(iterable $entries, callable $reader, string $baseUrl): PackagesJsonResult
     {

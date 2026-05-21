@@ -10,7 +10,7 @@ use League\Flysystem\Filesystem;
 final class Catalog
 {
     /**
-     * @return array{0: list<CatalogEntry>, 1: string}  [entries, sha256-of-listing]
+     * @return array{0: list<Release>, 1: string}  [entries, sha256-of-listing]
      */
     public function scan(Filesystem $fs): array
     {
@@ -23,7 +23,7 @@ final class Catalog
             if (!preg_match('#^([^/]+)/([^/]+)/([^/]+)\.zip$#', $path, $m)) {
                 continue;
             }
-            $entries[] = new CatalogEntry(
+            $entries[] = new Release(
                 vendor: $m[1],
                 package: $m[2],
                 version: $m[3],
@@ -35,7 +35,7 @@ final class Catalog
 
         usort(
             $entries,
-            fn (CatalogEntry $a, CatalogEntry $b): int => strcmp($a->path, $b->path)
+            fn (Release $a, Release $b): int => strcmp($a->path, $b->path)
         );
 
         $hashInput = '';

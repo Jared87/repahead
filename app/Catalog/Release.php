@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RepAhead\Catalog;
 
-final readonly class CatalogEntry
+final readonly class Release
 {
     public function __construct(
         public string $vendor,

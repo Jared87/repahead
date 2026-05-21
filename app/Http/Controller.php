@@ -14,7 +14,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RepAhead\Cache;
 use RepAhead\Catalog\Catalog;
-use RepAhead\Catalog\CatalogEntry;
+use RepAhead\Catalog\Release;
 use RepAhead\Catalog\PackagesJson;
 use RepAhead\Catalog\PackagesJsonResult;
 use RepAhead\Catalog\ZipMeta;
@@ -55,7 +55,7 @@ final readonly class Controller
         $json = $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
-                fn (CatalogEntry $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (Release $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             )->json;
         });
@@ -114,7 +114,7 @@ final readonly class Controller
         $this->cache->rebuild($hash, function () use ($entries, &$result) {
             $result = $this->packagesJson->build(
                 $entries,
-                fn (CatalogEntry $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
+                fn (Release $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             );
             return $result->json;
