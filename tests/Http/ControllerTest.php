@@ -51,6 +51,34 @@ final class ControllerTest extends TestCase
         @rmdir($this->cacheDir);
     }
 
+    public function testHealthReturns200WhenStorageIsReachable(): void
+    {
+        $resp = $this->controller->health(new ServerRequest());
+        self::assertSame(200, $resp->getStatusCode());
+        self::assertSame('application/json', $resp->getHeaderLine('Content-Type'));
+        self::assertSame(['status' => 'ok'], json_decode((string) $resp->getBody(), true));
+    }
+
+    public function testHealthReturns503WhenStorageIsUnreachable(): void
+    {
+        $fs = new \RepAhead\Tests\Support\ThrowingFilesystem();
+        $fs->failListContents();
+        $controller = new Controller(
+            fs: $fs,
+            catalog: new Catalog(),
+            zipMetadata: new ZipMetadata(),
+            packagesJson: new PackagesJson(new NullLogger()),
+            cache: new Cache($this->cacheDir, 0),
+            baseUrl: 'https://example.com',
+        );
+        $resp = $controller->health(new ServerRequest());
+        self::assertSame(503, $resp->getStatusCode());
+        self::assertSame(
+            ['status' => 'unavailable', 'error' => 'storage_unavailable'],
+            json_decode((string) $resp->getBody(), true)
+        );
+    }
+
     public function testPackagesEndpointReturnsJson(): void
     {
         $resp = $this->controller->packages(new ServerRequest());

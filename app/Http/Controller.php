@@ -33,6 +33,19 @@ final readonly class Controller
     ) {
     }
 
+    public function health(ServerRequestInterface $request): ResponseInterface
+    {
+        try {
+            foreach ($this->fs->listContents('', false) as $_) {
+                break;
+            }
+            return $this->jsonResponse(200, '{"status":"ok"}');
+        } catch (FilesystemException $e) {
+            $this->logger->error('Health check: storage unavailable', ['error' => $e->getMessage()]);
+            return $this->jsonResponse(503, '{"status":"unavailable","error":"storage_unavailable"}');
+        }
+    }
+
     public function packages(ServerRequestInterface $request): ResponseInterface
     {
         $cached = $this->cache->readIfFresh();

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A private Composer (Packagist-compatible) repository server. Publishers drop Release ZIPs into Storage (`zips/vendor/package/version.zip`); the service scans them into a Listing, builds a `packages.json` Index, and serves Releases over HTTP with basic auth. Storage is pluggable via Flysystem (local disk or S3).
 
-Three endpoints: `GET /packages.json` (cached Index), `GET /dist/{vendor}/{package}/{version}.zip` (stream a Release), `POST /rebuild` (force Index rebuild).
+Four endpoints: `GET /health` (Storage liveness probe, no auth), `GET /packages.json` (cached Index), `GET /dist/{vendor}/{package}/{version}.zip` (stream a Release), `POST /rebuild` (force Index rebuild).
 
 See `CONTEXT.md` for the domain glossary.
 
@@ -64,7 +64,7 @@ AUTH_PASS=$(grep AUTH_PASS .env | cut -d= -f2) docker compose up -d --build
 
 Three layers — understanding how they interact requires reading across files:
 
-- **HTTP** (`app/Http/`): `Auth` is a PSR-15 middleware for basic auth; `Controller` holds the three request handlers; `SafeJsonStrategy` is a JSON response strategy that catches exceptions and never leaks internal paths to clients.
+- **HTTP** (`app/Http/`): `Auth` is a PSR-15 middleware for basic auth; `Controller` holds the four request handlers; `SafeJsonStrategy` is a JSON response strategy that catches exceptions and never leaks internal paths to clients.
 - **Catalog** (`app/Catalog/`): `Catalog` scans Storage and returns a Listing of `Release` value objects; `PackagesJson` builds the Index from the Listing; `ZipMetadata` reads `composer.json` from inside each Release ZIP to extract name/require/autoload.
 - **Cross-cutting** (`app/`): `App` owns the router and wraps all dispatch in a safe catch-all; `Cache` provides file-based TTL + Listing Fingerprint matching with file-locking for concurrency; `Config` validates env vars at boot; `Storage` is a Flysystem factory driven by a `STORAGE_DSN` (`local:./zips` or `s3:bucket/prefix`).
 
@@ -86,6 +86,7 @@ Cache invalidation is two-tier: `LISTING_TTL_SECONDS` controls how often Storage
 - PSR-4 autoload: `RepAhead\\` → `app/`, `RepAhead\\Tests\\` → `tests/`.
 - Tests mirror the `app/` layout: `app/Http/Controller.php` ↔ `tests/Http/ControllerTest.php`, `app/Catalog/Catalog.php` ↔ `tests/Catalog/CatalogTest.php`. Cross-cutting tests (Config, Cache, Storage, EndToEnd, Smoke) stay at `tests/` root, matching the cross-cutting production files at `app/` root.
 - Domain vocabulary is in `CONTEXT.md`. Use it in code, comments, and commit messages.
+- Auth is applied **per-route** via `.middleware($auth)` in `App::router()`, not globally. `GET /health` is the only public route. Any new protected route must explicitly chain `.middleware($auth)`.
 - The implementation plan lives at `docs/superpowers/plans/` and the design
   spec at `docs/superpowers/specs/`. Both are committed history — read them
   before making structural changes.

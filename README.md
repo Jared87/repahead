@@ -33,13 +33,16 @@ The folder path (`vendor/package`) determines the Package identity; the filename
 
 ## Endpoints
 
-| Method | Route | Purpose |
-|--------|-------|---------|
-| GET | `/packages.json` | The Index — Composer repository index (cached) |
-| GET | `/dist/{vendor}/{package}/{version}.zip` | Stream a Release ZIP |
-| POST | `/rebuild` | Force an Index rebuild; returns `{packages, versions, skipped, duration_ms}` |
+| Method | Route | Auth | Purpose |
+|--------|-------|------|---------|
+| GET | `/health` | none | Storage liveness probe — `{"status":"ok"}` or 503 |
+| GET | `/packages.json` | basic | The Index — Composer repository index (cached) |
+| GET | `/dist/{vendor}/{package}/{version}.zip` | basic | Stream a Release ZIP |
+| POST | `/rebuild` | basic | Force an Index rebuild; returns `{packages, versions, skipped, duration_ms}` |
 
-All endpoints use HTTP basic auth (`AUTH_USER` / `AUTH_PASS`).
+`/health` is intentionally unauthenticated so Docker and load-balancer health checks work without credentials. All other endpoints require HTTP basic auth (`AUTH_USER` / `AUTH_PASS`).
+
+The Dockerfile includes a baked-in `HEALTHCHECK` that polls `GET /health` every 30 seconds (`curl -sf http://localhost:8080/health`).
 
 ## Consumer setup
 

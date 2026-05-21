@@ -53,6 +53,14 @@ final class EndToEndTest extends TestCase
         return $r->withHeader('Authorization', 'Basic ' . base64_encode('ci:secret'));
     }
 
+    public function testHealthRouteRequiresNoAuth(): void
+    {
+        $router = App::router($this->config, $this->fs);
+        $resp = $router->dispatch(new ServerRequest([], [], '/health', 'GET'));
+        self::assertSame(200, $resp->getStatusCode());
+        self::assertSame(['status' => 'ok'], json_decode((string) $resp->getBody(), true));
+    }
+
     public function testPackagesRoute200(): void
     {
         $router = App::router($this->config, $this->fs);
