@@ -55,6 +55,11 @@ final class Storage
             $config['region'] = $this->awsEnv['AWS_REGION'];
         }
 
+        if (!empty($this->awsEnv['AWS_ENDPOINT_URL'])) {
+            $config['endpoint'] = $this->awsEnv['AWS_ENDPOINT_URL'];
+            $config['use_path_style_endpoint'] = true;
+        }
+
         if ($hasKey) {
             $config['credentials'] = [
                 'key' => $this->awsEnv['AWS_ACCESS_KEY_ID'],

@@ -64,7 +64,7 @@ final class App
             logger: $logger,
         );
 
-        $auth = new Auth($config->authUser(), $config->authPass());
+        $auth = new Auth($config->authUser(), $config->authPass(), $logger);
 
         // SafeJsonStrategy handles 404/405 as JSON responses and sanitises uncaught exceptions.
         $strategy = new SafeJsonStrategy(new ResponseFactory(), $logger);
