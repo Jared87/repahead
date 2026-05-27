@@ -39,21 +39,29 @@ final class Storage
         $bucket = $slash === false ? $rest : substr($rest, 0, $slash);
         $prefix = $slash === false ? '' : substr($rest, $slash + 1);
 
-        foreach (['AWS_ACCESS_KEY_ID', 'AWS_SECRET_ACCESS_KEY', 'AWS_REGION'] as $required) {
-            if (empty($this->awsEnv[$required])) {
-                throw new InvalidArgumentException("S3 storage requires env var: $required");
-            }
+        $hasKey = !empty($this->awsEnv['AWS_ACCESS_KEY_ID']);
+        $hasSecret = !empty($this->awsEnv['AWS_SECRET_ACCESS_KEY']);
+
+        if ($hasKey !== $hasSecret) {
+            throw new InvalidArgumentException(
+                'S3 storage requires both AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, or neither. '
+                . 'Only ' . ($hasKey ? 'AWS_ACCESS_KEY_ID' : 'AWS_SECRET_ACCESS_KEY') . ' is set.'
+            );
         }
 
-        $client = new S3Client([
-            'version' => 'latest',
-            'region' => $this->awsEnv['AWS_REGION'],
-            'credentials' => [
+        $config = ['version' => 'latest'];
+
+        if (!empty($this->awsEnv['AWS_REGION'])) {
+            $config['region'] = $this->awsEnv['AWS_REGION'];
+        }
+
+        if ($hasKey) {
+            $config['credentials'] = [
                 'key' => $this->awsEnv['AWS_ACCESS_KEY_ID'],
                 'secret' => $this->awsEnv['AWS_SECRET_ACCESS_KEY'],
-            ],
-        ]);
+            ];
+        }
 
-        return new Filesystem(new AwsS3V3Adapter($client, $bucket, $prefix));
+        return new Filesystem(new AwsS3V3Adapter(new S3Client($config), $bucket, $prefix));
     }
 }

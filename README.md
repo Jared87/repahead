@@ -64,7 +64,9 @@ See `.env.example`. Key vars:
 
 ## S3 storage
 
-Set `STORAGE_DSN` to `s3:bucket-name` or `s3:bucket-name/optional/prefix`, then supply the three AWS credentials:
+Set `STORAGE_DSN` to `s3:bucket-name` or `s3:bucket-name/optional/prefix`.
+
+**With explicit credentials** (local dev, non-AWS hosting):
 
 ```
 STORAGE_DSN=s3:my-bucket/composer/zips
@@ -72,6 +74,15 @@ AWS_ACCESS_KEY_ID=AKIA...
 AWS_SECRET_ACCESS_KEY=...
 AWS_REGION=eu-central-1
 ```
+
+**With ambient credentials** (EC2 instance profile, ECS task role, Lambda execution role):
+
+```
+STORAGE_DSN=s3:my-bucket/composer/zips
+AWS_REGION=eu-central-1
+```
+
+Omit `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` entirely — the AWS SDK resolves credentials automatically from the runtime environment. `AWS_REGION` must still be set explicitly on EC2; Lambda sets it automatically as `AWS_REGION`, and ECS sets it as `AWS_DEFAULT_REGION`.
 
 The service only reads from S3 (list + download). The minimum IAM policy for the bucket is:
 
@@ -115,9 +126,9 @@ docker run -d \
 | `STORAGE_DSN` | `local:/var/www/html/zips` | Storage backend — `local:<path>` or `s3:<bucket>/<prefix>` |
 | `CACHE_DIR` | `/var/www/html/cache` | Directory for the `packages.json` cache and hash files |
 | `LISTING_TTL_SECONDS` | `30` | TTL tier: seconds before Storage is re-listed; `0` = list on every request |
-| `AWS_ACCESS_KEY_ID` | — | S3 only — AWS access key ID |
-| `AWS_SECRET_ACCESS_KEY` | — | S3 only — AWS secret access key |
-| `AWS_REGION` | — | S3 only — AWS region, e.g. `eu-central-1` |
+| `AWS_ACCESS_KEY_ID` | — | S3 only — explicit AWS access key ID; omit to use ambient credentials (instance profile, task role, Lambda role) |
+| `AWS_SECRET_ACCESS_KEY` | — | S3 only — explicit AWS secret access key; must be set together with `AWS_ACCESS_KEY_ID` or not at all |
+| `AWS_REGION` | — | S3 only — AWS region (e.g. `eu-central-1`); Lambda sets this automatically, ECS sets `AWS_DEFAULT_REGION` |
 | `SERVER_NAME` | `:8080` | Listen address and port (base image) |
 | `AUTOMATIC_HTTPS` | `off` | Auto-HTTPS via FrankenPHP/Caddy; keep `off` behind a reverse proxy (base image) |
 | `PHP_OPCACHE_ENABLE` | `1` | Enable PHP OPcache (base image) |

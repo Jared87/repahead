@@ -43,9 +43,28 @@ final class StorageTest extends TestCase
         (new Storage([]))->make('no-colon-here');
     }
 
-    public function testS3DsnRequiresCredentials(): void
+    public function testS3DsnWithAmbientCredentialsReturnsFilesystem(): void
+    {
+        // No key/secret — SDK provider chain resolves credentials at request time.
+        // Region must still be present (env or explicit); Lambda/ECS set AWS_REGION automatically.
+        $fs = (new Storage(['AWS_REGION' => 'eu-central-1']))->make('s3:bucket/prefix');
+        self::assertInstanceOf(Filesystem::class, $fs);
+    }
+
+    public function testS3DsnWithExplicitCredentialsReturnsFilesystem(): void
+    {
+        $fs = (new Storage([
+            'AWS_ACCESS_KEY_ID' => 'key',
+            'AWS_SECRET_ACCESS_KEY' => 'secret',
+            'AWS_REGION' => 'eu-central-1',
+        ]))->make('s3:bucket/prefix');
+        self::assertInstanceOf(Filesystem::class, $fs);
+    }
+
+    public function testS3DsnWithPartialCredentialsThrows(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        (new Storage([]))->make('s3:bucket/prefix');
+        $this->expectExceptionMessageMatches('/AWS_ACCESS_KEY_ID.*AWS_SECRET_ACCESS_KEY|AWS_SECRET_ACCESS_KEY.*AWS_ACCESS_KEY_ID/');
+        (new Storage(['AWS_ACCESS_KEY_ID' => 'key']))->make('s3:bucket/prefix');
     }
 }
