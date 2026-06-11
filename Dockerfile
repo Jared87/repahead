@@ -14,9 +14,9 @@ ENV SERVER_NAME=":8080" \
 
 USER root
 RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
-USER www-data
 
 USER www-data
+
 WORKDIR /var/www/html
 
 COPY --chown=www-data:www-data composer.json composer.lock ./
