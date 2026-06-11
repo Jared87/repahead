@@ -12,6 +12,9 @@ ENV SERVER_NAME=":8080" \
     LISTING_TTL_SECONDS="30" \
     AUTH_USER="ci"
 
+RUN apk update
+RUN apk upgrade
+
 USER www-data
 WORKDIR /var/www/html
 
