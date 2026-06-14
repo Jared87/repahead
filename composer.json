@@ -39,6 +39,7 @@
         "rector:dry": "rector --dry-run",
         "stan": "phpstan analyse --memory-limit=512M",
         "pint": "pint",
-        "pint:test": "pint --test"
+        "pint:test": "pint --test",
+        "docs": "pip install -r docs/requirements.txt && mkdocs serve"
     }
 }
