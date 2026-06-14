@@ -10,10 +10,10 @@ A request to `/packages.json`, `/dist/...`, or `/rebuild` returns 401.
 
 ## Index seems stale
 
-`POST /rebuild` returns the right counts but `/packages.json` still shows the old set.
+`/packages.json` is showing an old set of Releases.
 
 - The Index is cached. Wait `LISTING_TTL_SECONDS` for the TTL to expire, **or** explicitly force a rebuild with `POST /rebuild`.
-- After `POST /rebuild`, the new Index is served immediately — if you are still seeing the old one, check that you are hitting the right server (e.g. via `APP_BASE_URL`) and not a CDN or reverse-proxy cache.
+- If you have already called `POST /rebuild` and the response shows the right counts but `/packages.json` still returns the old set, you are hitting a downstream cache (CDN, reverse proxy, browser). Check that `APP_BASE_URL` points at the right host and bust the upstream cache.
 
 ## `/health` returns 503
 
