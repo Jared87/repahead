@@ -33,7 +33,7 @@ final class IndexView
     {
         // packages.json sorts versions lexically; present them semver newest-first.
         $ordered = $versions;
-        uksort($ordered, static fn ($a, $b): int => version_compare((string) $b, (string) $a));
+        uksort($ordered, static fn ($a, $b): int => version_compare($b, $a));
         $firstKey = array_key_first($ordered);
         $latest = $firstKey === null ? [] : $ordered[$firstKey];
 
