@@ -31,7 +31,7 @@ The response is the cached `packages.json` document. The cache is served until e
 
 Streams a Release ZIP straight from Storage.
 
-The URL appears in each Release's `dist.url` field in the Index — Composer follows it during `composer install`. Do not construct these URLs by hand.
+The URL appears in each Release's Dist block (the `dist.url` field) in the Index — Composer follows it during `composer install`. Do not construct these URLs by hand.
 
 ## `POST /rebuild`
 

@@ -22,7 +22,7 @@ Minimal — only `AUTH_PASS` is required:
 docker run -d -p 8080:8080 -e AUTH_PASS=secret tredmann/repahead
 ```
 
-Production — set `APP_BASE_URL` so dist links resolve correctly, and mount a volume for ZIPs:
+Production — set `APP_BASE_URL` so Dist URLs resolve correctly, and mount a volume for ZIPs:
 
 ```bash
 docker run -d \

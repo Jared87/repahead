@@ -20,7 +20,7 @@ Rules:
 - The folder path (`vendor/package`) determines the Package identity.
 - The filename (without `.zip`) determines the Release version.
 - The `composer.json` inside the ZIP is the source for `require`, `autoload`, etc.
-- If `composer.json`'s `name` is present and disagrees with the folder path, **the Release is rejected** and a warning is logged. Either omit the `name` field or make it match the folder path.
+- If `composer.json`'s `name` is present and disagrees with the folder path, **the Release is Rejected** and a warning is logged. Either omit the `name` field or make it match the folder path.
 
 ## Publishing to local Storage
 

@@ -51,3 +51,11 @@ A SHA-256 hash of the sorted Listing content (`path|size|lastModified` per Relea
 ## Index
 
 The rendered `packages.json` document that Composer consumes. Built from the Listing by opening each ZIP, reading its embedded `composer.json`, and synthesizing a `dist` block. Represented in code as `PackagesJsonResult`.
+
+## Listing TTL
+
+The time window during which a fresh Storage listing is skipped and the Cached Index is served straight from disk. Configured via `LISTING_TTL_SECONDS` (default `30`); `0` disables it entirely. Distinct from the Listing Fingerprint, which is a content check that runs once the TTL has expired — the TTL bounds how often Storage is listed, the Fingerprint decides whether a listing should trigger a Rebuild.
+
+## Rebuild
+
+The act of re-deriving the Index from a fresh Listing: opening each Release ZIP, reading its embedded `composer.json`, and synthesizing a Dist block per Release. Triggered either by the Listing Fingerprint changing after a TTL expiry, or by an explicit `POST /rebuild` from a Publisher. Reports Package count, Release count, Rejected-Release count, and wall-clock duration in its response.
