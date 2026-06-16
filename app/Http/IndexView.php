@@ -47,9 +47,15 @@ final class IndexView
         }
 
         $safeName = self::e($name);
+        $command = 'composer require ' . $name;
+        $require = self::e($command);
+        $size = strlen($command) + 1;
         return <<<HTML
         <article class="pkg">
-            <h2>{$safeName}</h2>
+            <div class="pkg-head">
+                <h2>{$safeName}</h2>
+                <input class="copy" type="text" readonly size="{$size}" value="{$require}" aria-label="Install command, click to copy">
+            </div>
             {$description}
             <ul class="versions">{$rows}</ul>
         </article>
@@ -96,7 +102,8 @@ final class IndexView
                 @media (prefers-color-scheme: dark) {
                     body { color: #e6e6e6; background: #161616; }
                     .pkg { background: #1f1f1f; border-color: #333; }
-                    pre { background: #111; }
+                    pre, .copy { background: #111; }
+                    .copy { border-color: #333; color: #e6e6e6; }
                 }
                 header { margin-bottom: 2rem; }
                 h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
@@ -109,7 +116,19 @@ final class IndexView
                     background: #fff; border: 1px solid #e5e5e5; border-radius: 8px;
                     padding: 1rem 1.25rem; margin-bottom: 1rem;
                 }
+                .pkg-head {
+                    display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem;
+                    justify-content: space-between;
+                }
                 .pkg h2 { font-size: 1.1rem; margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+                .copy {
+                    font: 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+                    background: #f6f6f6; border: 1px solid #ddd; border-radius: 6px;
+                    padding: .4rem .6rem; color: #1a1a1a; cursor: pointer;
+                    flex: 0 1 auto; max-width: 100%;
+                }
+                .copy:hover { border-color: #2563eb; }
+                .copy.copied { border-color: #16a34a; color: #16a34a; }
                 .desc { color: #666; margin: .35rem 0 .75rem; }
                 .versions { list-style: none; margin: 0; padding: 0;
                     display: flex; flex-wrap: wrap; gap: .4rem; }
@@ -131,6 +150,16 @@ final class IndexView
                 <pre>{$snippet}</pre>
             </header>
             {$cards}
+            <script>
+                document.addEventListener('click', function (e) {
+                    var input = e.target.closest('.copy');
+                    if (!input) return;
+                    input.select();
+                    navigator.clipboard && navigator.clipboard.writeText(input.value);
+                    input.classList.add('copied');
+                    setTimeout(function () { input.classList.remove('copied'); }, 1000);
+                });
+            </script>
         </body>
         </html>
 
