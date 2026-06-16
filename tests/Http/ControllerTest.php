@@ -104,6 +104,36 @@ final class ControllerTest extends TestCase
         self::assertSame(200, $resp->getStatusCode());
     }
 
+    public function testHomeRendersHtmlWithPackageAndZipLink(): void
+    {
+        $resp = $this->controller->home(new ServerRequest());
+        self::assertSame(200, $resp->getStatusCode());
+        self::assertStringContainsString('text/html', $resp->getHeaderLine('Content-Type'));
+        $html = (string) $resp->getBody();
+        self::assertStringContainsString('acme/billing', $html);
+        self::assertStringContainsString('1.2.0', $html);
+        self::assertStringContainsString('https://example.com/dist/acme/billing/1.2.0.zip', $html);
+    }
+
+    public function testHomeReturns503OnStorageListingFailure(): void
+    {
+        $fs = new \RepAhead\Tests\Support\ThrowingFilesystem();
+        $fs->failListContents();
+        $controller = new Controller(
+            fs: $fs,
+            catalog: new Catalog(),
+            zipMetadata: new ZipMetadata(),
+            packagesJson: new PackagesJson(new NullLogger()),
+            cache: new Cache($this->cacheDir, 0),
+            baseUrl: 'https://example.com',
+            logger: new NullLogger(),
+        );
+
+        $resp = $controller->home(new ServerRequest());
+        self::assertSame(503, $resp->getStatusCode());
+        self::assertStringContainsString('text/html', $resp->getHeaderLine('Content-Type'));
+    }
+
     public function testDistEndpointStreamsZipBytes(): void
     {
         $resp = $this->controller->dist(

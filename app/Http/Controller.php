@@ -48,32 +48,56 @@ final readonly class Controller
 
     public function packages(ServerRequestInterface $request): ResponseInterface
     {
-        $cached = $this->cache->readIfFresh();
-        if ($cached !== null) {
-            return $this->jsonResponse(200, $cached);
-        }
-
         try {
-            [$entries, $hash] = $this->catalog->scan($this->fs);
+            return $this->jsonResponse(200, $this->indexJson());
         } catch (FilesystemException $e) {
             $this->logger->error('Storage listing failed', ['error' => $e->getMessage()]);
             return $this->errorResponse(503, 'storage_unavailable');
         }
+    }
+
+    public function home(ServerRequestInterface $request): ResponseInterface
+    {
+        try {
+            $json = $this->indexJson();
+        } catch (FilesystemException $e) {
+            $this->logger->error('Storage listing failed', ['error' => $e->getMessage()]);
+            return $this->htmlResponse(503, '<!DOCTYPE html><title>503</title><p>Storage unavailable.</p>');
+        }
+
+        /** @var array{packages?: array<string, array<string, array<string, mixed>>>} $data */
+        $data = json_decode($json, true);
+
+        return $this->htmlResponse(200, IndexView::render($data['packages'] ?? [], $this->baseUrl));
+    }
+
+    /**
+     * Read the Index from cache, or scan Storage and rebuild it. Shared by the
+     * machine-readable packages.json endpoint and the human-facing landing page.
+     *
+     * @throws FilesystemException when Storage cannot be listed
+     */
+    private function indexJson(): string
+    {
+        $cached = $this->cache->readIfFresh();
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        [$entries, $hash] = $this->catalog->scan($this->fs);
 
         $cached = $this->cache->readIfHashMatches($hash);
         if ($cached !== null) {
-            return $this->jsonResponse(200, $cached);
+            return $cached;
         }
 
-        $json = $this->cache->rebuild($hash, function () use ($entries) {
+        return $this->cache->rebuild($hash, function () use ($entries) {
             return $this->packagesJson->build(
                 $entries,
                 fn (Release $e): ?ZipMeta => $this->zipMetadata->read($this->fs, $e->path),
                 $this->baseUrl,
             )->json;
         });
-
-        return $this->jsonResponse(200, $json);
     }
 
     /** @param array{vendor: string, package: string, version: string} $args */
@@ -151,6 +175,15 @@ final readonly class Controller
         return $resp
             ->withStatus($status)
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    private function htmlResponse(int $status, string $body): ResponseInterface
+    {
+        $resp = new Response();
+        $resp->getBody()->write($body);
+        return $resp
+            ->withStatus($status)
+            ->withHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
     private function errorResponse(int $status, string $errorCode): ResponseInterface
