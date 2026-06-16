@@ -8,9 +8,9 @@ repahead is configured entirely through environment variables. In Docker, pass t
 |----------|---------|-------------|
 | `AUTH_PASS` | — | **Required.** HTTP basic auth password. |
 | `AUTH_USER` | `ci` | HTTP basic auth username. |
-| `APP_BASE_URL` | `http://localhost:8080` | Public base URL; used in `packages.json` dist download links. Set this in production so Composer clients fetch from the right host. |
+| `APP_BASE_URL` | `http://localhost:8080` | Public base URL; used in `packages.json` Dist URLs. Set this in production so Composer clients fetch from the right host. |
 | `STORAGE_DSN` | `local:/var/www/html/zips` | Storage backend. See [Storage backends](#storage-backends). |
-| `CACHE_DIR` | `/var/www/html/cache` | Directory for the `packages.json` cache and hash files. Always local, regardless of the Storage backend. |
+| `CACHE_DIR` | `/var/www/html/cache` | Directory for the Cache — the Index, the Listing Fingerprint, and the rebuild lock. Always local, regardless of the Storage backend. |
 | `LISTING_TTL_SECONDS` | `30` | Seconds before Storage is re-listed. `0` disables the TTL (Storage is listed on every request). See [Cache behavior](#cache-behavior). |
 | `AWS_ACCESS_KEY_ID` | — | S3 only. Explicit AWS access key ID. Omit to use ambient credentials. |
 | `AWS_SECRET_ACCESS_KEY` | — | S3 only. Must be set together with `AWS_ACCESS_KEY_ID` or not at all. |
@@ -70,7 +70,7 @@ repahead only reads from S3 (list + download). The minimum bucket policy:
 
 ## Cache behavior
 
-repahead uses two cache tiers:
+repahead decides whether to serve the Cached Index through two independent checks:
 
 1. **Listing TTL** (`LISTING_TTL_SECONDS`) — how often Storage is re-listed. Defaults to 30 seconds.
 2. **Listing Fingerprint** — even after a fresh listing, the cached Index is reused unchanged if the Release set has not changed (SHA-256 match).
