@@ -75,6 +75,8 @@ final class App
         $router->get('/health', fn (ServerRequestInterface $req): ResponseInterface => $controller->health($req));
 
         // Protected — auth required per route.
+        $router->get('/', fn (ServerRequestInterface $req): ResponseInterface => $controller->home($req))
+            ->middleware($auth);
         $router->get('/packages.json', fn (ServerRequestInterface $req): ResponseInterface => $controller->packages($req))
             ->middleware($auth);
         $router->get(
